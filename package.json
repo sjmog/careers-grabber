@@ -1,0 +1,25 @@
+{
+  "name": "code-grabber",
+  "version": "1.0.0",
+  "description": "Grabs code from PRs and turns it into PDFs for upload to NoMoreMarking.com",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjmog/code-grabber.git"
+  },
+  "author": "Sam Morgan (s_morgan@me.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sjmog/code-grabber/issues"
+  },
+  "homepage": "https://github.com/sjmog/code-grabber#readme",
+  "dependencies": {
+    "phantom": "^4.0.5",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
+}
