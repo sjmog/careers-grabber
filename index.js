@@ -1,29 +1,105 @@
-const requestPromise = require('request-promise');
+require('dotenv').config()
+
+const request = require('request-promise');
 const PullRequest = require('./src/pull-request');
-const phantom = require('phantom');
+const File = require('./src/file');
+const merge = require('easy-pdf-merge');
 
 // Declare config //
 
-const CHALLENGE = 'rps-challenge'
+const CHALLENGE = 'news-summary-challenge'
 
-const requestOptions = {
-  url: `https://api.github.com/repos/makersacademy/${CHALLENGE}/pulls`,
-  headers: { 'User-Agent': 'request' },
-  json: true
+const requestOptions = (url) => {
+  return {
+    url: url,
+    qs: {
+      access_token: process.env.GITHUB_ACCESS_TOKEN
+    },
+    headers: { 'User-Agent': 'request' },
+    json: true
+  }
 }
 
-const handle = async (githubResponse) => {
-  const pullRequests = githubResponse.map(pullRequestData => new PullRequest(pullRequestData))
-  
-  for(var i = 0; i < pullRequests.length; i++) {
-    const instance = await phantom.create()
-    const page     = await instance.createPage()
-    await page.on('onResourceRequested', function(requestData) {
-      console.info('Requesting', requestData.url)
-    })
+const isAllowedFileType = (fileUrl) => {
+  return !fileUrl.includes('node_modules') 
+    && !fileUrl.includes('.DS_Store')
+    && !fileUrl.includes('bootstrap')
+    && !fileUrl.includes('travis.yml')
+    && !fileUrl.includes('.png')
+    && !fileUrl.includes('.jpg')
+    && !fileUrl.includes('.gif')
+    && !fileUrl.includes('README') // sorry, but these are too long most of the time
+    && !fileUrl.includes('INSTRUCTIONS')
+    && !fileUrl.includes('.xml')
+    && !fileUrl.includes('.gitignore')
+}
 
-    pullRequests[i].toPdf(instance, page)
+const enqueue = (file) => {
+  return function(callback) {
+    file
+      .getPdfPath()
+      .then((pdfPath) => {
+        callback(file.student, pdfPath)
+      });
+  };
+};
+
+const visitAndRender = (queue, studentAndPdfPaths) => {
+  if (queue.length === 0) {
+    mergePdfs(studentAndPdfPaths);
+  } else {
+    queue[0](function(student, pdfPath) {
+      visitAndRender(queue.slice(1),
+                   mutated(studentAndPdfPaths, student, pdfPath),
+                   mergePdfs);
+    });
   }
+};
+
+const mutated = (studentAndPdfPaths, student, pdfPath) => {
+  studentAndPdfPaths.student = student
+  studentAndPdfPaths.pdfs.push(pdfPath)
+
+  return studentAndPdfPaths
+}
+
+const mergePdfs = (studentAndPdfPaths) => {
+  const student = studentAndPdfPaths.student
+  const files = studentAndPdfPaths.pdfs
+
+  if(files.length > 1) {
+    console.log(`merging PDF for ${student}`)
+    merge(files, `${__dirname}/finals/${student}.pdf`, (err) => {
+      if(err) { return console.log(err) }
+      console.log(`Successfully merged ${files.length} files for ${student}`)
+    })
+  } else {
+    console.log(`${student} only submitted ${files.length} valid file. Skipping merge...`)
+  }
+}
+
+const renderedPdfFor = async (filesForPullRequest, student) => {
+  const fileQueue = await filesForPullRequest
+                                .map(response => response.blob_url)
+                                .filter(fileUrl => isAllowedFileType(fileUrl))
+                                .map((fileUrl, index) => {
+                                  return new File(fileUrl, student, index)
+                                })
+                                .map(file => enqueue(file))
+
+  visitAndRender(fileQueue, { student: "", pdfs: [] })
+}
+
+const filesFor = async (pullRequest) => {
+  const files = await request(requestOptions(`${pullRequest.url}/files`))
+  return files
+}
+
+const getFilesByUser = (githubResponse) => {
+  githubResponse
+    .map(async (pullRequest) => {
+      renderedPdfFor(await filesFor(pullRequest), pullRequest.user.login)
+    })
 }
 
 // Execute script //
@@ -31,6 +107,6 @@ const handle = async (githubResponse) => {
 console.log('Starting...')
 console.log('Requesting Pull Request URLs from Github API')
 
-requestPromise(requestOptions).then((githubResponse) => {
-  handle(githubResponse)
+request(requestOptions(`https://api.github.com/repos/makersacademy/${CHALLENGE}/pulls`)).then((githubResponse) => {
+  getFilesByUser(githubResponse)
 })

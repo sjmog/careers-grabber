@@ -9,7 +9,6 @@ const PullRequest = function(pullRequestData) {
     console.log('Rendering PDF for', this.githubUsername)
     await page.render(`./scans/${this._filename()}`)
 
-    console.log('All done! Check ./scans for the PDF scans.')
     await instance.exit()
   }
 
