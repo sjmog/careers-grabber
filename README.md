@@ -4,7 +4,7 @@ Grabs code from Makers Academy challenge PRs, and prints to PDF for upload to No
 
 Prototypes using ACJ for code quality assessment.
 
-## Getting Started
+## Getting Started
 
 - `npm install`. 
 - Change the `CHALLENGE` constant (in ./index.js) to the name of the challenge you want to download. (Default is `news-summary-challenge`)
@@ -19,7 +19,7 @@ Once you've grabbed all the files:
 - Close all completed challenge Pull Requests so it's ready for next time.
 - Head to [No More Marking](https://www.nomoremarking.com/), set up a new task, and upload the finals PDFs as scans.
 
-## How does it work
+## How does it work
 
 1. Grab open PRs from the Github API, along with the Github username of the submitter.
 2. For each PR, grab the list of files.
