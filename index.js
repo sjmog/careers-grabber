@@ -7,7 +7,7 @@ const merge = require('easy-pdf-merge');
 
 // Declare config //
 
-const CHALLENGE = 'news-summary-challenge'
+const CHALLENGE = 'chitter-challenge'
 
 const requestOptions = (url) => {
   return {
@@ -32,6 +32,12 @@ const isAllowedFileType = (fileUrl) => {
     && !fileUrl.includes('INSTRUCTIONS')
     && !fileUrl.includes('.xml')
     && !fileUrl.includes('.gitignore')
+    && !fileUrl.includes('Gemfile.lock')
+    && !fileUrl.includes('Procfile')
+    && !fileUrl.includes('Rakefile')
+    && !fileUrl.includes('rubocop')
+    && !fileUrl.includes('normalize.css')
+    && !fileUrl.includes('config.ru')
 }
 
 const enqueue = (file) => {
