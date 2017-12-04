@@ -40,6 +40,12 @@ const isAllowedFileType = (fileUrl) => {
     && !fileUrl.includes('rubocop')
     && !fileUrl.includes('normalize.css')
     && !fileUrl.includes('config.ru')
+    && !fileUrl.includes('.rspec')
+    && !fileUrl.includes('CONTRIBUTING')
+    && !fileUrl.includes('rubocop')
+    && !fileUrl.includes('Rakefile')
+    && !fileUrl.includes('LICENSE')
+    && !fileUrl.includes('spec_helper')
 }
 
 const enqueue = (file) => {
