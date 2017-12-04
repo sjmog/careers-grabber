@@ -51,6 +51,9 @@ const isAllowedFileType = (fileUrl) => {
     && !fileUrl.includes('package.json')
     && !fileUrl.includes('SampleSpec')
     && !fileUrl.includes('Sample.js')
+    && !fileUrl.includes('eslintrc')
+    && !fileUrl.includes('jQuery')
+    && !fileUrl.includes('jquery')
 }
 
 const enqueue = (file) => {
