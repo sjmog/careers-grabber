@@ -113,7 +113,7 @@ const renderedPdfFor = async (filesForPullRequest, student) => {
 }
 
 const filesFor = async (pullRequest) => {
-  const files = await request(requestOptions(`${pullRequest.url}/files`))
+  const files = await request(requestOptions(`${pullRequest.url}/files?per_page=100`))
   return files
 }
 
