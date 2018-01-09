@@ -23,6 +23,7 @@
     "phantom": "^4.0.8",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
-    "slimerjs": "^0.10.3"
+    "slimerjs": "^0.10.3",
+    "easy-pdf-merge": "0.1.3"
   }
 }

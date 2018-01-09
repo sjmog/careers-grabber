@@ -7,7 +7,7 @@ const merge = require('easy-pdf-merge');
 
 // Declare config //
 
-const CHALLENGE = 'bowling-challenge'
+const CHALLENGE = 'airport_challenge'
 
 const requestOptions = (url) => {
   return {
@@ -54,6 +54,7 @@ const isAllowedFileType = (fileUrl) => {
     && !fileUrl.includes('eslintrc')
     && !fileUrl.includes('jQuery')
     && !fileUrl.includes('jquery')
+    && !fileUrl.includes('review.md')
 }
 
 const enqueue = (file) => {
